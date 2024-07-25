@@ -11,7 +11,7 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import { Button } from '@/components/ui/button'
-import { ArrowBigDownDash, Terminal } from 'lucide-react'
+import { ArrowBigDownDash, Terminal, Trash2 } from 'lucide-react'
 import downloadExcel from "@/utils/downloadXlsx.js"
 
 type ele = {
@@ -35,7 +35,19 @@ const page = () => {
           setLoading(false)
           console.log(data, 'data');
         })
-    }, [])
+    }, [isLoading])
+
+
+    const deleteHandler = (itemid:any) => {
+        fetch(`http://localhost:1000/csv/deleteData/${itemid}`,{ method:"DELETE" })
+        .then((res) => res.json())
+        .then((data) => {
+            console.log(data);
+        //   setData(data)
+          setLoading(!isLoading)
+          console.log(data, 'data');
+        })
+    }
     return (
         <div>
             <Table>
@@ -46,20 +58,26 @@ const page = () => {
                         <TableHead>name</TableHead>
                         <TableHead>date</TableHead>
                         <TableHead className="text-right"></TableHead>
+                        <TableHead className="text-right"></TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
 
                     {
-                        data?.map((ele:ele)=>{
+                        data?.map((ele:ele, index)=>{
                             console.log(ele.items)
                             return <TableRow>
-                            <TableCell className="font-medium">INV001</TableCell>
-                            <TableCell>01.xlsx</TableCell>
-                            <TableCell>25-feb</TableCell>
+                            <TableCell className="font-medium">{index+1}</TableCell>
+                            <TableCell>{ele?.fileName}</TableCell>
+                            <TableCell>{ele.createdAt}</TableCell>
                             <TableCell className="text-right">
-                                <Button variant="secondary" onClick={()=>downloadExcel(ele?.items) }>
+                                <Button variant="secondary" className='bg-green-500 text-black' onClick={()=>downloadExcel(ele?.items) }>
                                     <ArrowBigDownDash />download file
+                                </Button>
+                            </TableCell>
+                            <TableCell className="text-right">
+                                <Button variant="secondary" className='bg-red-600 text-white' onClick={()=>deleteHandler(ele?._id) }>
+                                    <Trash2/>delete file
                                 </Button>
                             </TableCell>
                         </TableRow>
