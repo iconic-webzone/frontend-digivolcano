@@ -1,5 +1,5 @@
 "use client"
-import React, { FormEvent } from 'react'
+import React, { FormEvent, useEffect } from 'react'
 import { Label } from './ui/label'
 import { Input } from './ui/input'
 import { Button } from './ui/button'
@@ -12,6 +12,10 @@ const FileUploader = ({ localhost }) => {
     const [file, setFile] = React.useState(null);
     const [scrappingDone, setScrappingDone] = React.useState(false);
     const [scrappingStatusRunning, setScrappingStatusRunning] = React.useState(false);
+
+    useEffect(()=>{
+
+    },[scrappingStatusRunning,scrappingDone])
 
 
     const changeHandler = (e: any) => {
@@ -27,6 +31,7 @@ const FileUploader = ({ localhost }) => {
         try {
             data.append("csvFile", file)
             console.log(data)
+            setScrappingStatusRunning(prevStatus => !prevStatus)
             const response = await fetch(`http://localhost:${localhost}/csv`, {
                 method: 'POST',
                 body: data,
@@ -35,10 +40,11 @@ const FileUploader = ({ localhost }) => {
             // Handle response if necessary
             const apiResponseData = await response.json()
             setScrappingDone(!scrappingDone)
-
+            setScrappingStatusRunning(prevStatus => !prevStatus)
             console.log(apiResponseData);
         } catch (err) {
             console.log(err)
+            setScrappingStatusRunning(prevStatus => !prevStatus)
         }
 
     }
