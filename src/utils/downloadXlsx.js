@@ -1,13 +1,13 @@
 import * as XLSX from "xlsx";
 
 const downloadExcel = (data) => {
-    const worksheet = XLSX.utils.json_to_sheet(data);
-    // const workbook = XLSX.utils.book_new();
-    const workbook = {}
+    const flattenTheData = data.map(item => ({
+      urls:item.url,
+      emails:Array.isArray(item.emails)? item.emails.join(', '):"null"  // Join multiple emails into a single string
+  }));
+    const worksheet = XLSX.utils.json_to_sheet(flattenTheData);
+    const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-    //let buffer = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
-    //XLSX.write(workbook, { bookType: "xlsx", type: "binary" });
-    // const wbout = XLSX.write(workbook,{type: "blob",bookType:'xlsx'})
     XLSX.writeFile(workbook, "DataSheet.xlsx");
   };
 
