@@ -69,7 +69,7 @@ const page = () => {
                             return <TableRow>
                             <TableCell className="font-medium">{index+1}</TableCell>
                             <TableCell>{ele?.fileName}</TableCell>
-                            <TableCell>{ele.createdAt}</TableCell>
+                            <TableCell>{ele?.createdAt}</TableCell>
                             <TableCell className="text-right">
                                 <Button variant="secondary" className='bg-green-500 text-black' onClick={()=>downloadExcel(ele?.items) }>
                                     <ArrowBigDownDash />download file

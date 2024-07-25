@@ -1,3 +1,4 @@
+
 import React from 'react'
 import Link from 'next/link'
 import {
@@ -9,9 +10,10 @@ import {
     MenubarShortcut,
     MenubarTrigger,
 } from "@/components/ui/menubar"
+import { Container, Nav, Navbar } from 'react-bootstrap'
 
 
-const Navbar = () => {
+const NavbarComponent = () => {
     return (
         <div>
             <Menubar>
@@ -23,9 +25,9 @@ const Navbar = () => {
                         <MenubarTrigger>downloadFiles</MenubarTrigger>
                     </Link>
                 </MenubarMenu>
-            </Menubar>
+            </Menubar>          
         </div>
     )
 }
 
-export default Navbar
+export default NavbarComponent;

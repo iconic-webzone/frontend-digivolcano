@@ -3,53 +3,78 @@ import React, { FormEvent } from 'react'
 import { Label } from './ui/label'
 import { Input } from './ui/input'
 import { Button } from './ui/button'
-import { ArrowBigUpDash, Loader2 } from 'lucide-react'
+import { ArrowBigUpDash, Loader2, Terminal } from 'lucide-react'
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 
-const FileUploader = () => {
-    const [file, setFile] = React.useState("");
 
-    
-    const changeHandler = (e:any) => {
+
+const FileUploader = ({ localhost }) => {
+    const [file, setFile] = React.useState(null);
+    const [scrappingDone, setScrappingDone] = React.useState(false);
+    const [scrappingStatusRunning, setScrappingStatusRunning] = React.useState(false);
+
+
+    const changeHandler = (e: any) => {
         setFile(e.target.files[0]);
         console.log(file)
     }
 
-    const clickHandler = async() => {
-        const data = new FormData() 
-        data.append("csvFile", file)
+    const data = new FormData()
 
+
+    async function onSubmit(event: any) {
+        event.preventDefault()
+        try {
+            data.append("csvFile", file)
+            console.log(data)
+            const response = await fetch(`http://localhost:${localhost}/csv`, {
+                method: 'POST',
+                body: data,
+            })
+
+            // Handle response if necessary
+            const apiResponseData = await response.json()
+            setScrappingDone(!scrappingDone)
+
+            console.log(apiResponseData);
+        } catch (err) {
+            console.log(err)
+        }
 
     }
-
-    async function onSubmit(event: FormEvent<HTMLFormElement>) {
-        event.preventDefault()
-     
-        const formData = new FormData(event.currentTarget)
-        console.log(event.currentTarget,event.target)
-        const response = await fetch('http://localhost:1000/csv', {
-          method: 'POST',
-          body: formData,
-        })
-     
-        // Handle response if necessary
-        const data = await response.json()
-        console.log(data);
-      }
     return (
         <>
             <form className="grid w-full max-w-sm items-center gap-1.5" onSubmit={onSubmit}>
                 <div>
                     <Label htmlFor="picture">excel file</Label>
-                    <Input id="picture" type="file" onChange={changeHandler}/>
+                    <Input id="picture" type="file" onChange={changeHandler} />
                 </div>
-                <Button variant="secondary" type="submit">
-                    <ArrowBigUpDash />upload file
-                </Button>
-                <Button disabled>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Please wait
-                </Button>
+                {
+                    scrappingStatusRunning ?
+                        <Button disabled>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Please wait
+                        </Button> :
+                        <Button variant="secondary" type="submit">
+                            <ArrowBigUpDash />upload file
+                        </Button>
+
+                }
+
+
+
             </form>
+            {
+                scrappingDone ? <Alert>
+                    <Terminal className="h-4 w-4" />
+                    <AlertTitle>1000 completed!</AlertTitle>
+                    <AlertDescription>
+                        You can add components and dependencies to your app using the cli.
+                    </AlertDescription>
+                </Alert> : ""
+            }
+
+
         </>
 
     )
